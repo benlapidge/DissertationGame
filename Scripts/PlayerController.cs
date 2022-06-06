@@ -16,11 +16,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform playerCamera = null;
     [SerializeField] float mouseSensitivity = 3.5f;
     [SerializeField] float walkSpeed = 6.0f;
+    [SerializeField] float jumpSpeed = 10.0f;
     [SerializeField] float gravity = -13.0f;
     [SerializeField][Range(0.0f, 0.5f)] float moveSmoothTime = 0.3f;
     [SerializeField][Range(0.0f, 0.5f)] float mouseSmoothTime = 0.03f;
 
-
+    Vector3 velocity;
     float cameraPitch = 0.0f; // used for clamping camera angle
     float velocityY = 0.0f;
 
@@ -43,7 +44,7 @@ public class PlayerController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-        
+
     }
 
     // Update is called once per frame
@@ -51,6 +52,8 @@ public class PlayerController : MonoBehaviour
     {
         UpdateMouseLook();
         UpdateMovement();
+        Jump();
+
     }
 
     void UpdateMouseLook()
@@ -69,14 +72,39 @@ public class PlayerController : MonoBehaviour
         Vector2 targetDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         targetDir.Normalize();
 
-        if (controller.isGrounded)
-            velocityY = 0.0f;
-        velocityY += gravity * Time.deltaTime;
+       
 
         currentDir = Vector2.SmoothDamp(currentDir, targetDir, ref currentDirVelocity, moveSmoothTime);
 
-        Vector3 velocity = (transform.forward * currentDir.y + transform.right * currentDir.x) * walkSpeed + Vector3.up * velocityY;
+        velocity = (transform.forward * currentDir.y + transform.right * currentDir.x) * walkSpeed + Vector3.up * velocityY;
         controller.Move(velocity * Time.deltaTime);
+
+        if (controller.isGrounded)
+        {
+            Debug.Log("Player Grounded");
+        }
+
+        
     }
-  
+
+    void Jump()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            velocityY += jumpSpeed;
+            Debug.Log("Jumped with velocity of " + velocityY);
+        }
+       
+
+        if (controller.isGrounded == false)
+        {
+            velocityY += gravity * Time.deltaTime;
+            Debug.Log("Gravity is now being applied " + velocityY);
+        } else
+        {
+            velocityY = 0.0f;
+            Debug.Log("Normal VelocityY " + velocityY);
+        }
+    }
+
 }
