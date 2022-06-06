@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
     {
         UpdateMouseLook();
         UpdateMovement();
-        Jump();
+       // Jump();
 
     }
 
@@ -72,8 +72,23 @@ public class PlayerController : MonoBehaviour
         Vector2 targetDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         targetDir.Normalize();
 
-       
+        if (Input.GetButtonDown("Jump") && velocity.y == 0)
+        {
+            velocityY += jumpSpeed;
+            Debug.Log("Jumped with velocity of " + velocityY);
+        }
 
+
+        if (controller.isGrounded == false)
+        {
+            velocityY += gravity * Time.deltaTime;
+            Debug.Log("Gravity is now being applied " + velocityY);
+        }
+        else
+        {
+            velocityY = 0.0f;
+            Debug.Log("Normal VelocityY " + velocityY);
+        }
         currentDir = Vector2.SmoothDamp(currentDir, targetDir, ref currentDirVelocity, moveSmoothTime);
 
         velocity = (transform.forward * currentDir.y + transform.right * currentDir.x) * walkSpeed + Vector3.up * velocityY;
@@ -87,24 +102,24 @@ public class PlayerController : MonoBehaviour
         
     }
 
-    void Jump()
-    {
-        if (Input.GetButtonDown("Jump"))
-        {
-            velocityY += jumpSpeed;
-            Debug.Log("Jumped with velocity of " + velocityY);
-        }
+    //void Jump()
+    //{
+    //    if (Input.GetButtonDown("Jump"))
+    //    {
+    //        velocityY += jumpSpeed;
+    //        Debug.Log("Jumped with velocity of " + velocityY);
+    //    }
        
 
-        if (controller.isGrounded == false)
-        {
-            velocityY += gravity * Time.deltaTime;
-            Debug.Log("Gravity is now being applied " + velocityY);
-        } else
-        {
-            velocityY = 0.0f;
-            Debug.Log("Normal VelocityY " + velocityY);
-        }
-    }
+    //    if (controller.isGrounded == false)
+    //    {
+    //        velocityY += gravity * Time.deltaTime;
+    //        Debug.Log("Gravity is now being applied " + velocityY);
+    //    } else
+    //    {
+    //        velocityY = 0.0f;
+    //        Debug.Log("Normal VelocityY " + velocityY);
+    //    }
+    //}
 
 }
