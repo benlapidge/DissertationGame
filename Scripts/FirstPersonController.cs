@@ -5,6 +5,12 @@ using UnityEngine;
 public class FirstPersonController : MonoBehaviour
 {
 
+    /*
+     * Used this tutorial series to build this system
+     * https://www.youtube.com/watch?v=AQc-NM2Up3M&list=PLfhbBaEcybmgidDH3RX_qzFM0mIxWJa21&index=8
+     * 
+     */
+
     public bool CanMove { get; private set; } = true;
     private bool IsSprinting => canSprint && Input.GetKey(sprintKey);
     private bool ShouldJump => Input.GetKey(jumpKey) && characterController.isGrounded;
@@ -12,11 +18,13 @@ public class FirstPersonController : MonoBehaviour
     [Header("Functional Options")]
     [SerializeField] private bool canSprint = true;
     [SerializeField] private bool canJump = true;
-    [SerializeField] bool headBobEnable = true;
+    [SerializeField] private bool headBobEnable = true;
+    [SerializeField] private bool canInteract = true;
 
     [Header("Controls")]
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
+    [SerializeField] private KeyCode interactKey = KeyCode.E;
 
     [Header("Movement Parameters")]
     [SerializeField] private float walkSpeed = 8.0f;
@@ -39,6 +47,12 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float walkBobAmount = 0.05f;
     [SerializeField] private float sprintBobSpeed = 20f;
     [SerializeField] private float sprintBobAmount = 0.1f;
+
+    [Header("Interaction")]
+    [SerializeField] private Vector3 interactionRayPoint = default;
+    [SerializeField] private float interactionDistance = default;
+    [SerializeField] private LayerMask interactionLayer = default;
+    private Interactable currentInteractable;
 
     private float defaultYPos = 1.0f;
     private float timer;
@@ -78,7 +92,43 @@ public class FirstPersonController : MonoBehaviour
             {
                 HeadBobber();
             }
+
+            if (canInteract)
+            {
+                HandleInteractionCheck();
+                HandleInteractionInput();
+            }
         } 
+    }
+
+    private void HandleInteractionCheck()
+    {
+        if(Physics.Raycast(playerCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit, interactionDistance))
+        {
+            if (hit.collider.gameObject.layer == 9 && (currentInteractable == null || hit.collider.gameObject.GetInstanceID() != currentInteractable.GetInstanceID()))
+            {
+                hit.collider.TryGetComponent(out currentInteractable);
+
+                if (currentInteractable)
+                {
+                    currentInteractable.OnFocus();
+                }
+            }
+        }
+        else if (currentInteractable)
+        {
+            currentInteractable.OnFocusLost();
+            currentInteractable = null;
+        }
+    }
+
+
+    private void HandleInteractionInput()
+    {
+        if (Input.GetKey(interactKey) && currentInteractable != null && Physics.Raycast(playerCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit, interactionDistance, interactionLayer))
+        {
+            currentInteractable.OnInteract();
+        }
     }
 
     private void HandleMovementInput()
