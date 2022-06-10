@@ -56,6 +56,7 @@ public class FirstPersonController : MonoBehaviour
 
     private float defaultYPos = 1.0f;
     private float timer;
+    
 
     private Camera playerCamera;
     private CharacterController characterController;
@@ -175,4 +176,6 @@ public class FirstPersonController : MonoBehaviour
 
         characterController.Move(moveDirection * Time.deltaTime);
     }
+
+  
 }
