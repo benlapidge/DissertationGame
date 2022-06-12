@@ -5,21 +5,22 @@ using UnityEngine;
 public class KeyScript : Interactable
 {
 
-    [SerializeField] int keyNumber = default;
+    [SerializeField] InventorySystem inventory = null;
+    [SerializeField] int keyNum = default;
     public override void OnFocus()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("Looking at key " + keyNum);
     }
 
     public override void OnFocusLost()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("Stopped looking at key " + keyNum);
     }
 
     public override void OnInteract()
     {
-
-        throw new System.NotImplementedException();
+        Debug.Log("Interacted with key " + keyNum);
+        inventory.SetKeys(keyNum);
     }
    
 }

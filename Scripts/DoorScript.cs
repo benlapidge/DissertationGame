@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DoorScript : Interactable
 {
-
+    [SerializeField] private InventorySystem inventory = default;
     private Animator doorAnim;
     private bool doorOpen = false;
     [SerializeField] int doorNum = default;
@@ -31,8 +31,9 @@ public class DoorScript : Interactable
 
     public override void OnInteract()
     {
-        if (!doorOpen)
+        if (!doorOpen && inventory.GetKeys().Contains(doorNum))
         {
+            
             doorAnim.Play("DoorOpen", 0, 0.0f);
             doorOpen = true;
 
