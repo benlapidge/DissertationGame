@@ -10,8 +10,9 @@ public class Gun : MonoBehaviour
     public float fireRate = 15f;
     public ParticleSystem muzzleFlash;
     [SerializeField] private Camera fpsCam;
-    private float impactForce = 30f;
     private Animator shoot;
+    [SerializeField] AudioSource gunSound = default;
+    [SerializeField] private AudioClip shot = default;
 
     private void Start()
     {
@@ -29,6 +30,7 @@ public class Gun : MonoBehaviour
         muzzleFlash.Play();
         shoot.Play("BarrelShot");
         shoot.Play("idle");
+        gunSound.PlayOneShot(shot);
         RaycastHit hit;
         if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
         {

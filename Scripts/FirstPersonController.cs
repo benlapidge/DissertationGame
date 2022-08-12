@@ -8,6 +8,7 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private bool canJump = true;
     [SerializeField] private bool headBobEnable = true;
     [SerializeField] private bool canInteract = true;
+    [SerializeField] private bool footSteps = true;
 
     [Header("Controls")] [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
 
@@ -44,6 +45,15 @@ public class FirstPersonController : MonoBehaviour
 
     [SerializeField] private float interactionDistance;
     [SerializeField] private LayerMask interactionLayer;
+
+    [Header("Footsteps")] 
+    [SerializeField] private float baseStepSpeed = 0.5f;
+    [SerializeField] private float sprintMultiplier = 0.6f;
+    [SerializeField] private AudioSource footstepAudioSource = default;
+    [SerializeField] private AudioClip[] stepClips = default;
+    private float footstepTimer = 0;
+    private float GetCurrentOffset => IsSprinting ? baseStepSpeed * sprintMultiplier : baseStepSpeed;
+    
 
 
     private readonly float defaultYPos = 1.0f;
@@ -90,6 +100,8 @@ public class FirstPersonController : MonoBehaviour
             if (canJump) HandleJump();
 
             if (headBobEnable) HeadBobber();
+
+            if (footSteps) HandleFootSteps();
 
             if (canInteract)
             {
@@ -164,6 +176,21 @@ public class FirstPersonController : MonoBehaviour
     {
         if (ShouldJump)
             moveDirection.y = jumpForce;
+    }
+    
+    private void HandleFootSteps(){
+        if (!characterController.isGrounded) return;
+        if (currentInput == Vector2.zero) return;
+        
+        footstepTimer -= Time.deltaTime;
+        
+        if (footstepTimer <= 0)
+        {
+            footstepAudioSource.PlayOneShot(stepClips[Random.Range(0, stepClips.Length -1)]);
+            footstepTimer = GetCurrentOffset;
+        }
+
+        
     }
 
 

@@ -19,8 +19,7 @@ public class ADAPTATIONEEngine1 : MonoBehaviour
     [SerializeField] private MetricSensor room10;
     //allows addition of all room sensors in engine.
 
-    [Header("Instantiation Objects")] 
-    [SerializeField] private GameObject mediumHealthpack;
+    [Header("Instantiation Objects")]
     [SerializeField] private GameObject largeHealthpack;
 
     [SerializeField] private GameObject weakEnemy;
@@ -33,8 +32,11 @@ public class ADAPTATIONEEngine1 : MonoBehaviour
 
 //array of rooms
     private readonly List<MetricSensor> roomSensors = new();
+    private readonly List<Int32> playerScore = new();
 //iterator for keeping track of which room player is in
     private int currentRoom;
+    private int healthScore;
+    private int timeScore;
     
     
 
@@ -64,6 +66,9 @@ public class ADAPTATIONEEngine1 : MonoBehaviour
         if (MonitorHealth(roomSensors[currentRoom]) >= 0 && MonitorTime(roomSensors[currentRoom]) >= 0) //will likely struggle in edge cases where player loses no health but has time, will start running prematurely
         {
             // include iteration to next room once adaptation process is complete    
+        AdaptHealth(MonitorHealth(roomSensors[currentRoom]));
+        AdaptTime(MonitorTime(roomSensors[currentRoom]));
+        playerScore.Add(AddScores(healthScore, timeScore));
         
             if (currentRoom < 9) // this moves the algorithm to watch the next room, move this until after the last relevant method for the AE is completed.
             {
@@ -71,6 +76,7 @@ public class ADAPTATIONEEngine1 : MonoBehaviour
                 playerRoom = roomSensors[currentRoom].transform;
                 nextRoom = roomSensors[currentRoom+1].transform;
                 Debug.Log("MOVING TO " + currentRoom);
+                
             }
         }
         
@@ -89,48 +95,146 @@ public class ADAPTATIONEEngine1 : MonoBehaviour
     }
     private float MonitorTime(MetricSensor room)
     {
-        return 1.0f;
+        
+        bool playerPresent = room.PlayerPresent();
+        if (playerPresent && room.PlayerExited())
+        {
+            return room.ReturnTimeTaken() / room.ReturnTimeLimit() * 100; // return time taken as a percentage of total time
+        }
+        return -1;
+    }
+// Adaptation Methods & Randomizer
+    private void AdaptHealth(float healthLoss)
+    {
+        int randomizer = Random.Range(0, 2);
+        if (healthLoss >= 50) //low health state
+        {
+            // TODO random value for HIGH health loss. Either fewer enemies, weaker enemies, or mega health pack
+            switch (randomizer)
+            {
+                case 0:
+                    SpawnHealthPack();
+                    break;
+                case 1:
+                    ReplaceEnemy(0);
+                    break;
+                case 2:
+                    RemoveEnemy();
+                    break;
+            }
+            healthScore = 1;//adds score of 1 "low state"
+            
+        } else if (healthLoss >= 11) //medium health state
+        {
+            //does nothing for this health state
+            healthScore = 2;//adds score of 2 "medium state"
+            
+        } else if (healthLoss <= 10) //high health state
+        {
+            // TODO random value for HIGH health loss. Either fewer enemies, weaker enemies, or mega health pack
+            switch (randomizer)
+            {
+                case 0:
+                    RemoveHealthPack();
+                    break;
+                case 1:
+                    ReplaceEnemy(1);
+                    break;
+                case 2:
+                    SpawnEnemy();
+                    break;
+            }
+            healthScore = 3;//adds score of 3 "high state"
+            
+        }
+    }
+    private void AdaptTime(float timeUsed)
+    {
+        int randomizer = Random.Range(0, 2);
+        if (timeUsed >= 50) // slow time state
+        {
+           
+            switch (randomizer)
+            {
+                case 0:
+                    SpawnHealthPack();
+                    break;
+                case 1:
+                    ReplaceEnemy(0);
+                    break;
+                case 2:
+                    RemoveEnemy();
+                    break;
+            }
+            timeScore = 1;//adds score of 1 "low state"
+            
+        } else if (timeUsed >= 11) //medium health state
+        {
+            //does nothing for this health state
+            timeScore = 2;//adds score of 2 "medium state"
+            
+        } else if (timeUsed <= 10) //high health state
+        {
+            // TODO random value for HIGH health loss. Either fewer enemies, weaker enemies, or mega health pack
+            switch (randomizer)
+            {
+                case 0:
+                    RemoveHealthPack();
+                    break;
+                case 1:
+                    ReplaceEnemy(1);
+                    break;
+                case 2:
+                    SpawnEnemy();
+                    break;
+            }
+            timeScore = 3;//adds score of 3 "high state"
+            
+        }
     }
 
+    private int AddScores(int healthscore, int timescore)
+    {
+        return healthscore + timescore;
+    }
+
+    private List<Int32> GetPlayerScore()
+    {
+        return playerScore; // for UI to display score at end
+    }
     // Instantiation Methods
 
-    private void SpawnEnemy(int value)
+    private void SpawnEnemy()
     {
         //TODO Fix this to work properly
         // this method takes in a value and then instantiates an enemy based on that value
         Transform EnemySpawnPoint = nextRoom.transform.GetChild(RandomSpawnPoint());
-
-        switch (value)
-        {
-            case 0:
-                Instantiate(normalEnemy, new Vector3(EnemySpawnPoint.position.x, EnemySpawnPoint.position.y+1, EnemySpawnPoint.position.z),
+        Instantiate(normalEnemy, new Vector3(EnemySpawnPoint.position.x, EnemySpawnPoint.position.y+1, EnemySpawnPoint.position.z),
                     EnemySpawnPoint.rotation);
-                break;
-            
-        }
     }
 
-    private void RemoveEnemy(int value)
+    private void ReplaceEnemy(int value)
+    {
+        // if 0 replace normal enemy with weaker enemy
+        // if 1 replace normal enemy with stronger enemy
+        // this method replaces a preset enemy from the subsequent room if called
+    }
+    private void RemoveEnemy()
     {
         // this method removes a preset enemy from the subsequent room if called
     }
 
-    private void SpawnHealthPack(int value)
+    private void SpawnHealthPack()
     {
         //TODO Fix this to work properly
         Transform HealthPackSpawnPoint = nextRoom.transform.GetChild(RandomSpawnPoint());
-        switch (value)
-        {
-            case 0:
-                Instantiate(normalEnemy, new Vector3(HealthPackSpawnPoint.position.x, HealthPackSpawnPoint.position.y+1, HealthPackSpawnPoint.position.z),
+        Instantiate(largeHealthpack, new Vector3(HealthPackSpawnPoint.position.x, HealthPackSpawnPoint.position.y+1, HealthPackSpawnPoint.position.z),
                     HealthPackSpawnPoint.rotation);
-                break;
-            
-        }
+        
         // this method takes in a value and then instantiates a healthpack based on that value
     }
     
-    private void RemoveHealthPack(int value)
+    private void RemoveHealthPack()
     {
         // this method takes in a value and then instantiates a healthpack based on that value
     }

@@ -10,6 +10,13 @@ public class EnemyAI : Shootable
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
 
+    [Header("Audio")] 
+    [SerializeField] private AudioSource voiceBox = default;
+    [SerializeField] private AudioClip[] hitClips = default;
+    [SerializeField] private AudioClip[] walkClip = default;
+    [SerializeField] private AudioClip deathClip = default;
+    
+
     //patrolling
     public Vector3 walkPoint;
     public float walkPointRange;
@@ -35,6 +42,7 @@ public class EnemyAI : Shootable
         agent = GetComponent<NavMeshAgent>();
         animation = gameObject.GetComponent<Animator>();
         blood = gameObject.GetComponentInChildren<ParticleSystem>();
+        voiceBox = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -114,6 +122,7 @@ public class EnemyAI : Shootable
         agent.enabled = false;
         alive = false;
         blood.Play();
+        voiceBox.PlayOneShot(deathClip);
         animation.Play("DeathAnim");
         animation.StopPlayback();
         Destroy(gameObject, 3f);
