@@ -3313,7 +3313,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 8508a5c246ad14a0aacbb59c71dcab0b, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 8458b122cdff3474f8d66563c6bcfd25, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &386057268
 Transform:
@@ -12029,7 +12029,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-40630
+  m_Name: pb_Mesh-13320
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -18215,9 +18215,11 @@ MonoBehaviour:
   room8: {fileID: 1527755727}
   room9: {fileID: 1086964368}
   room10: {fileID: 795148259}
-  healthpack: {fileID: 6099420865529146934, guid: 7af3b9f1fe596438084386bca59161fd, type: 3}
-  enemy: {fileID: 8483016408674247944, guid: b42cf6cf443d342109991087b322fe36, type: 3}
-  nextroom: {fileID: 0}
+  largeHealthpack: {fileID: 0}
+  weakEnemy: {fileID: 0}
+  normalEnemy: {fileID: 0}
+  toughEnemy: {fileID: 0}
+  nextRoom: {fileID: 0}
   playerRoom: {fileID: 0}
 --- !u!4 &1955826023
 Transform:
@@ -19851,7 +19853,7 @@ PrefabInstance:
       objectReference: {fileID: 1370768626}
     - target: {fileID: 1633770239420236615, guid: c7e78fc800642427d9c3c563434ff7da, type: 3}
       propertyPath: m_VersionIndex
-      value: 17
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1633770239420236729, guid: c7e78fc800642427d9c3c563434ff7da, type: 3}
       propertyPath: m_Mesh
