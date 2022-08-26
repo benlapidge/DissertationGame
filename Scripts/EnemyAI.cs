@@ -34,15 +34,30 @@ public class EnemyAI : Shootable
     private ParticleSystem blood;
     private bool playerInSightRange, playerInAttackRange;
     private bool walkPointSet;
+    
+    //laser effect
+    private LineRenderer laser;
 
     private void Awake()
     {
+        
         alive = true;
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animation = gameObject.GetComponent<Animator>();
         blood = gameObject.GetComponentInChildren<ParticleSystem>();
         voiceBox = GetComponent<AudioSource>();
+        InitialiseLaser();
+    }
+
+    private void InitialiseLaser()
+    {
+        laser = gameObject.AddComponent<LineRenderer>();
+        laser.enabled = false;
+        laser.startColor = Color.red;
+        laser.endColor = Color.red;
+        laser.startWidth = 0.2f;
+        laser.endWidth = 0.2f;
     }
 
     private void Update()
@@ -87,14 +102,16 @@ public class EnemyAI : Shootable
 
         if (!alreadyAttacked)
         {
-            //TODO ATTACK HERE
-            
+
             // only if raycast is player
             RaycastHit hit;
             if (Physics.Raycast(agent.transform.position, agent.transform.forward, out hit))
             {
                 if (hit.transform == player)
                 {
+                    laser.enabled = true;
+                    laser.SetPosition(0, agent.transform.position);
+                    laser.SetPosition(1, player.transform.position);
                     HealthSystem.OnTakeDamage(20);
                     //end attack
                     alreadyAttacked = true;
