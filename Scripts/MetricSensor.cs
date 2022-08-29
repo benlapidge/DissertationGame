@@ -13,7 +13,7 @@ public class MetricSensor : MonoBehaviour
     private bool playerExited;
     public bool startTimer;
     public float currentTime;
-    [SerializeField] float timeLimit = default;
+    [SerializeField] private float timeLimit;
     
     //for UI
     public static Action<float> OnTimerStart;
@@ -127,7 +127,7 @@ public class MetricSensor : MonoBehaviour
     public float ReturnTimeTaken()
     {
         //returns amount of time remaining as a percentage of total time
-        return currentTime;
+        return timeLimit - currentTime;
     }
 
     public void SetTimeLimit(float time)

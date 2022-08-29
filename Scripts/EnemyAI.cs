@@ -9,12 +9,14 @@ public class EnemyAI : Shootable
     public NavMeshAgent agent;
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
+    [SerializeField] private float DamageAmount = default;
 
     [Header("Audio")] 
     [SerializeField] private AudioSource voiceBox = default;
     [SerializeField] private AudioClip[] hitClips = default;
     [SerializeField] private AudioClip[] walkClip = default;
     [SerializeField] private AudioClip deathClip = default;
+    
     
 
     //patrolling
@@ -112,7 +114,7 @@ public class EnemyAI : Shootable
                     laser.enabled = true;
                     laser.SetPosition(0, agent.transform.position);
                     laser.SetPosition(1, player.transform.position);
-                    HealthSystem.OnTakeDamage(20);
+                    HealthSystem.OnTakeDamage(DamageAmount);
                     //end attack
                     alreadyAttacked = true;
                     Invoke(nameof(ResetAttack), timeBetweenAttacks);

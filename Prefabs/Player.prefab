@@ -137,6 +137,8 @@ MonoBehaviour:
   fireRate: 15
   muzzleFlash: {fileID: 3059838757807173499}
   fpsCam: {fileID: 3059838757052431900}
+  gunSound: {fileID: 0}
+  shot: {fileID: 0}
 --- !u!1 &3059838756516679486
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,7 +330,6 @@ GameObject:
   - component: {fileID: 3059838757544899495}
   - component: {fileID: 3059838757544899513}
   - component: {fileID: 3059838757544899512}
-  - component: {fileID: 3059838757544899515}
   m_Layer: 11
   m_Name: Player
   m_TagString: Player
@@ -386,6 +387,7 @@ MonoBehaviour:
   canJump: 1
   headBobEnable: 1
   canInteract: 1
+  footSteps: 1
   sprintKey: 304
   jumpKey: 32
   interactKey: 101
@@ -406,6 +408,10 @@ MonoBehaviour:
   interactionLayer:
     serializedVersion: 2
     m_Bits: 512
+  baseStepSpeed: 0.5
+  sprintMultiplier: 0.6
+  footstepAudioSource: {fileID: 0}
+  stepClips: []
 --- !u!114 &3059838757544899512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,21 +429,6 @@ MonoBehaviour:
   healthValueIncrement: 1
   healthTimeIncrement: 0.1
   regenActive: 0
-  _respawn: {fileID: 3059838757544899515}
---- !u!114 &3059838757544899515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3059838757544899493}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e669a889bf1440f1bd9c10e95ae0b3d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  respawnPoint: {fileID: 0}
 --- !u!1 &3059838757589490925
 GameObject:
   m_ObjectHideFlags: 0
@@ -578,7 +569,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3059838757807173478}
   serializedVersion: 8
-  lengthInSec: 0.2
+  lengthInSec: 0.3
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -759,8 +750,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 0.08018869, g: 0.89020634, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.4828682, b: 0, a: 1}
+      minColor: {r: 0, g: 0.7545428, b: 1, a: 1}
+      maxColor: {r: 0, g: 0, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -822,7 +813,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.06
+      scalar: 0.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1199,7 +1190,7 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 4
-    angle: 18.33
+    angle: 1.5
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 0

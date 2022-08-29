@@ -148,6 +148,7 @@ MonoBehaviour:
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 2048
+  DamageAmount: 15
   voiceBox: {fileID: 0}
   hitClips: []
   walkClip: []

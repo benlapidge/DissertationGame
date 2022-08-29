@@ -101,8 +101,8 @@ public class AdaptationEngine : MonoBehaviour
         bool playerPresent = room.PlayerPresent();
         if (playerPresent && room.PlayerExited())
         {
-            Debug.Log("AD TT% +" + (room.ReturnTimeTaken() / room.ReturnTimeLimit() * 100));
-            return room.ReturnTimeTaken() / room.ReturnTimeLimit() * 100; // return time taken as a percentage of total time
+            Debug.Log("AE Monitor Time  +" + (room.ReturnTimeTaken() / room.ReturnTimeLimit() * 100));
+            return room.ReturnTimeTaken() / room.ReturnTimeLimit() * 100; // returns time used as percentage
         }
         return -1;
     }
@@ -132,13 +132,13 @@ public class AdaptationEngine : MonoBehaviour
             }
             healthScore = 1;//adds score of 1 "low state"
             
-        } else if (healthLoss >= 11) //medium health state
+        } else if (healthLoss >= 26) //medium health state
         {
             //does nothing for this health state
             Debug.Log("AE AdaptHealth MEDIUM state");
             healthScore = 2;//adds score of 2 "medium state"
             
-        } else if (healthLoss <= 10) //high health state
+        } else if (healthLoss <= 25) //high health state
         {
             Debug.Log("AE AdaptHealth HIGH state");
             // TODO random value for HIGH health loss. Either fewer enemies, weaker enemies, or mega health pack
@@ -341,7 +341,7 @@ public class AdaptationEngine : MonoBehaviour
         // This method adds a preset amount of time to the room timer in the next room
         
         roomSensors[currentRoom+1].SetTimeLimit(newTime);
-        Debug.Log("AE ReduceTime "+ newTime);
+        Debug.Log("AE ReduceTime next toom time is "+ newTime);
     }
     
     
