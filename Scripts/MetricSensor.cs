@@ -133,5 +133,7 @@ public class MetricSensor : MonoBehaviour
     public void SetTimeLimit(float time)
     {
         timeLimit = time;
+        currentTime = time;
+        Debug.Log("SetTimeLimit called. New time is: "+time+"timeLimit variable = "+timeLimit);
     }
 }

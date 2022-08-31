@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,12 +8,14 @@ using UnityEngine.UI;
 public class UI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private TextMeshProUGUI playerScore;
     [SerializeField] private TextMeshProUGUI keyList;
     [SerializeField] private TextMeshProUGUI timeLimit;
     [SerializeField] private InventorySystem inventory;
     [SerializeField] private Image damageTaken;
     [SerializeField] private Image healthTaken;
     private int currentKey;
+    private AdaptationEngine engine = default;
 
     private void Start()
     {
@@ -19,6 +23,7 @@ public class UI : MonoBehaviour
         damageTaken.enabled = false;
         healthTaken.enabled = false;
         timeLimit.enabled = false;
+        engine = GameObject.Find("AdaptationEngine").GetComponent<AdaptationEngine>();
     }
 
     private void Update()
@@ -86,5 +91,15 @@ public class UI : MonoBehaviour
         healthTaken.enabled = true;
         yield return new WaitForSeconds(0.2f);
         healthTaken.enabled = false;
+    }
+
+    private void GameEnding()
+    {
+        List<Int32> list = engine.GetPlayerScore();
+
+        foreach (var score in list)
+        {
+            
+        }
     }
 }
