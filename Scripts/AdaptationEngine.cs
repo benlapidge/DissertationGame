@@ -164,7 +164,7 @@ public class AdaptationEngine : MonoBehaviour
     public void AdaptTime(float timeUsed)
     {
         int randomizer = Random.Range(0, 3); // todo return random number and check they are different
-        if (timeUsed >= 50) // slow time state
+        if (timeUsed >= 67) // slow time state
         {
             Debug.Log("AE AdaptTime SLOW state");
             switch (randomizer)
@@ -184,13 +184,13 @@ public class AdaptationEngine : MonoBehaviour
             }
             timeScore = 1;//adds score of 1 "low state"
             
-        } else if (timeUsed >= 11) //medium health state
+        } else if (timeUsed >= 34) //medium health state
         {
             //does nothing for this health state
             Debug.Log("AE AdaptTime NORMAL state");
             timeScore = 2;//adds score of 2 "medium state"
             
-        } else if (timeUsed <= 10) //high health state
+        } else if (timeUsed <= 33) //high health state
         {
             Debug.Log("AE AdaptTime FAST state");
             // TODO random value for HIGH health loss. Either fewer enemies, weaker enemies, or mega health pack
@@ -219,7 +219,7 @@ public class AdaptationEngine : MonoBehaviour
         return healthscore + timescore;
     }
 
-    private List<Int32> GetPlayerScore()
+    public List<Int32> GetPlayerScore()
     {
         return playerScore; // for UI to display score at end
     }
@@ -250,18 +250,21 @@ public class AdaptationEngine : MonoBehaviour
         {
             if (randomEnemyInNextRoom.name == "ToughEnemy") // checks enemy type to reduce
             {
+                Debug.Log("Replacing "+randomEnemyInNextRoom.name + " with a normal enemy");
                 Destroy(randomEnemyInNextRoom);
                 Instantiate(normalEnemy, new Vector3(randomEnemyInNextRoomPosition.position.x, randomEnemyInNextRoomPosition.position.y, randomEnemyInNextRoomPosition.position.z),
-                    randomEnemyInNextRoomPosition.rotation); // instantiates the lower tier of enemy at the position of the original enemy
+                    randomEnemyInNextRoomPosition.rotation); 
+               // instantiates the lower tier of enemy at the position of the original enemy
             } else if (randomEnemyInNextRoom.name == "NormalEnemy") // checks enemy type to reduce
             {
+                Debug.Log("Replacing "+randomEnemyInNextRoom.name + " with a weak enemy");
                 Destroy(randomEnemyInNextRoom);
                 Instantiate(weakEnemy, new Vector3(randomEnemyInNextRoomPosition.position.x, randomEnemyInNextRoomPosition.position.y, randomEnemyInNextRoomPosition.position.z),
                     randomEnemyInNextRoomPosition.rotation); // instantiates the lower tier of enemy at the position of the original enemy
             } else if (randomEnemyInNextRoom.name == "WeakEnemy") // checks enemy type to reduce
             {
                 
-                Debug.Log("no replacement made"); //todo iterate to other child if this occurs
+                Debug.Log("no replacement made");
             }
             
         }
@@ -273,12 +276,13 @@ public class AdaptationEngine : MonoBehaviour
                 
             } else if (randomEnemyInNextRoom.name == "NormalEnemy") // checks enemy type to reduce
             {
+                Debug.Log("Replacing "+randomEnemyInNextRoom.name + " with a tough enemy");
                 Destroy(randomEnemyInNextRoom);
                 Instantiate(toughEnemy, new Vector3(randomEnemyInNextRoomPosition.position.x, randomEnemyInNextRoomPosition.position.y, randomEnemyInNextRoomPosition.position.z),
                     randomEnemyInNextRoomPosition.rotation); // instantiates the lower tier of enemy at the position of the original enemy
             } else if (randomEnemyInNextRoom.name == "WeakEnemy") // checks enemy type to reduce
             {
-                
+                Debug.Log("Replacing "+randomEnemyInNextRoom.name + " with a normal enemy");
                 Destroy(randomEnemyInNextRoom);
                 Instantiate(normalEnemy, new Vector3(randomEnemyInNextRoomPosition.position.x, randomEnemyInNextRoomPosition.position.y, randomEnemyInNextRoomPosition.position.z),
                     randomEnemyInNextRoomPosition.rotation);
@@ -323,7 +327,7 @@ public class AdaptationEngine : MonoBehaviour
     {
         
         
-        float newTime = roomSensors[currentRoom].ReturnTimeLimit()+(value/100)/2*roomSensors[currentRoom].ReturnTimeLimit();
+        float newTime = roomSensors[currentRoom+1].ReturnTimeLimit()+(value/100)/2*roomSensors[currentRoom+1].ReturnTimeLimit();
         // takes half of the percentage of time used in the previous room, and finds how much time this was as part of the original time limit, then adds it to the original time limit, then sets the new time limit as this number
         // This method adds a preset amount of time to the room timer in the next room
         
@@ -335,13 +339,13 @@ public class AdaptationEngine : MonoBehaviour
     public void ReduceTime(float value)
     {
         // This method removes a preset amount of time to the room timer in the next room
-        float newTime = roomSensors[currentRoom].ReturnTimeLimit()-(value/100)/2*roomSensors[currentRoom].ReturnTimeLimit();
+        float newTime = roomSensors[currentRoom+1].ReturnTimeLimit()-(value/100)/2*roomSensors[currentRoom+1].ReturnTimeLimit();
         
         // takes half of the percentage of time used in the previous room, and finds how much time this was as part of the original time limit, then subtracts it to the original time limit, then sets the new time limit as this number
         // This method adds a preset amount of time to the room timer in the next room
         
         roomSensors[currentRoom+1].SetTimeLimit(newTime);
-        Debug.Log("AE ReduceTime next toom time is "+ newTime);
+        Debug.Log("AE ReduceTime next room time is "+ newTime);
     }
     
     
