@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bab692e5e36014793b41eb09af50326f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 50
+  health: 45
   agent: {fileID: 8483016408674247953}
   player: {fileID: 0}
   whatIsGround:
