@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI : Shootable
+public class UltraMechanoid : Shootable
 {
+   
     [Header("Shootable Object Properties")] [SerializeField]
     private float health;
 
@@ -33,7 +34,7 @@ public class EnemyAI : Shootable
     private bool alreadyAttacked;
 
     private Animator animation;
-    private ParticleSystem blood;
+    
     private bool playerInSightRange, playerInAttackRange;
     private bool walkPointSet;
     
@@ -47,7 +48,6 @@ public class EnemyAI : Shootable
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animation = gameObject.GetComponent<Animator>();
-        blood = gameObject.GetComponentInChildren<ParticleSystem>();
         voiceBox = GetComponent<AudioSource>();
         InitialiseLaser();
     }
@@ -58,8 +58,8 @@ public class EnemyAI : Shootable
         laser.enabled = false;
         laser.startColor = Color.red;
         laser.endColor = Color.red;
-        laser.startWidth = 0.2f;
-        laser.endWidth = 0.2f;
+        laser.startWidth = 0.4f;
+        laser.endWidth = 0.4f;
     }
 
     private void Update()
@@ -67,44 +67,44 @@ public class EnemyAI : Shootable
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
         if (alive && !playerInSightRange && !playerInAttackRange)
-            Patrolling(); //note this cool syntax for further if statements
-        if (alive && playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if (alive && playerInSightRange && playerInAttackRange) AttackPlayer();
+        {
+            Idle();
+            Debug.Log("player not in sight or attack range");
+        }
+
+        if (alive && playerInSightRange && !playerInAttackRange)
+        {
+            Idle();
+            Debug.Log("player seen but not in attack range");
+        }
+
+        if (alive && playerInSightRange && playerInAttackRange)
+        {
+            AttackPlayer();
+            Debug.Log("ATTACK");
+        }
     }
 
 
-    private void Patrolling()
+    private void Idle()
     {
-        if (!walkPointSet) SearchWalkPoint();
-        if (walkPointSet) agent.SetDestination(walkPoint);
-
-        var distanceToWalkPoint = transform.position - walkPoint;
-        //Walkpoint Reached
-        if (distanceToWalkPoint.magnitude < 1f) walkPointSet = false;
+       animation.Play("UM_idle");
+       Debug.Log("UM Idle Method");
     }
-
-    private void SearchWalkPoint()
-    {
-        var randomZ = Random.Range(-walkPointRange, walkPointRange);
-        var randomX = Random.Range(-walkPointRange, walkPointRange);
-
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround)) walkPointSet = true;
-    }
-
-    private void ChasePlayer()
-    {
-        agent.SetDestination(player.position);
-    }
+    
+    
 
     private void AttackPlayer()
     {
-        agent.SetDestination(transform.position); //stops enemy from moving
+        Debug.Log("UM Attack Player");
+        agent.SetDestination(transform.position);
         transform.LookAt(player);
+        Debug.Log("UM Lookat Player");
 
         if (!alreadyAttacked)
         {
-
+            Debug.Log("UM Attack");
+            animation.Play("UM_Attack");
             // only if raycast is player
             RaycastHit hit;
             if (Physics.Raycast(agent.transform.position, agent.transform.forward, out hit))
@@ -142,9 +142,8 @@ public class EnemyAI : Shootable
     {
         agent.enabled = false;
         alive = false;
-        blood.Play();
         voiceBox.PlayOneShot(deathClip);
-        animation.Play("DeathAnim");
+        animation.Play("UM_death");
         animation.StopPlayback();
         Destroy(gameObject, 3f);
     }
@@ -157,5 +156,13 @@ public class EnemyAI : Shootable
     public override void OnFocusLost()
     {
         Debug.Log("Stopped looking at " + gameObject.name);
+    }
+    
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, sightRange);
     }
 }
