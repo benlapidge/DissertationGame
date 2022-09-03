@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class UI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI healthText;
-    [SerializeField] private TextMeshProUGUI playerScore;
     [SerializeField] private TextMeshProUGUI keyList;
     [SerializeField] private TextMeshProUGUI timeLimit;
     [SerializeField] private InventorySystem inventory;
@@ -93,13 +92,5 @@ public class UI : MonoBehaviour
         healthTaken.enabled = false;
     }
 
-    private void GameEnding()
-    {
-        List<Int32> list = engine.GetPlayerScore();
-
-        foreach (var score in list)
-        {
-            
-        }
-    }
+    
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -26,6 +27,7 @@ public class AdaptationEngine : MonoBehaviour
     [SerializeField] private GameObject weakEnemy;
     [SerializeField] private GameObject normalEnemy;
     [SerializeField] private GameObject toughEnemy;
+    [SerializeField] private UltraMechanoid ultraMechanoid;
     
     [Header("Debug")] 
     [SerializeField] private Transform nextRoom;
@@ -33,11 +35,14 @@ public class AdaptationEngine : MonoBehaviour
 
 //array of rooms
     private readonly List<MetricSensor> roomSensors = new();
+    private readonly List<Int32> playerHealthScore = new();
+    private readonly List<Int32> playerTimeScore = new();
     private readonly List<Int32> playerScore = new();
 //iterator for keeping track of which room player is in
     private int currentRoom;
     private int healthScore;
     private int timeScore;
+    private bool UMAdapted = false;
     
     
 
@@ -64,23 +69,37 @@ public class AdaptationEngine : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (MonitorHealth(roomSensors[currentRoom]) >= 0 && MonitorTime(roomSensors[currentRoom]) >= 0) //will likely struggle in edge cases where player loses no health but has time, will start running prematurely
+        if (currentRoom < 6)
         {
-            // include iteration to next room once adaptation process is complete    
-        AdaptHealth(MonitorHealth(roomSensors[currentRoom]));
-        AdaptTime(MonitorTime(roomSensors[currentRoom]));
-        playerScore.Add(AddScores(healthScore, timeScore));
-        
-            if (currentRoom < 9) // this moves the algorithm to watch the next room, move this until after the last relevant method for the AE is completed.
+            if (MonitorHealth(roomSensors[currentRoom]) >= 0 && MonitorTime(roomSensors[currentRoom]) >= 0) //will likely struggle in edge cases where player loses no health but has time, will start running prematurely
             {
-                currentRoom += 1;
-                playerRoom = roomSensors[currentRoom].transform;
-                nextRoom = roomSensors[currentRoom+1].transform;
-                Debug.Log("MOVING TO " + currentRoom);
-                
-            }
-        }
+                // include iteration to next room once adaptation process is complete    
+                AdaptHealth(MonitorHealth(roomSensors[currentRoom]));
+                AdaptTime(MonitorTime(roomSensors[currentRoom]));
+                playerScore.Add(AddScores(healthScore, timeScore));
+                playerHealthScore.Add(healthScore);
+                playerTimeScore.Add(timeScore);
         
+        
+        
+                if (currentRoom < 6) // this moves the algorithm to watch the next room, move this until after the last relevant method for the AE is completed.
+                {
+                    currentRoom += 1;
+                    playerRoom = roomSensors[currentRoom].transform;
+                    nextRoom = roomSensors[currentRoom+1].transform;
+                    Debug.Log("MOVING TO " + currentRoom);
+                
+                
+                }
+            } 
+        } 
+        if (currentRoom == 4 && !UMAdapted)
+        {
+            Debug.Log("Entering AI Chamber");
+            AdaptUltraMechanoid();
+            UMAdapted = true;
+        }
+
     }
     // Monitoring Methods
     public float MonitorHealth(MetricSensor room)
@@ -89,7 +108,7 @@ public class AdaptationEngine : MonoBehaviour
         if (playerPresent && room.PlayerExited())
         {
             Debug.Log("AD HL +" + (room.EnterHealth() - room.ExitHealth()));
-            return room.EnterHealth() - room.ExitHealth(); //todo test this
+            return room.EnterHealth() - room.ExitHealth();
         }
         return -1;
         
@@ -114,7 +133,7 @@ public class AdaptationEngine : MonoBehaviour
         if (healthLoss >= 50) //low health state
         {
             Debug.Log("AE AdaptHealth LOW state");
-            // TODO random value for HIGH health loss. Either fewer enemies, weaker enemies, or mega health pack
+           
             switch (randomizer)
             {
                 case 0:
@@ -141,7 +160,7 @@ public class AdaptationEngine : MonoBehaviour
         } else if (healthLoss <= 25) //high health state
         {
             Debug.Log("AE AdaptHealth HIGH state");
-            // TODO random value for HIGH health loss. Either fewer enemies, weaker enemies, or mega health pack
+            
             switch (randomizer)
             {
                 case 0:
@@ -193,7 +212,7 @@ public class AdaptationEngine : MonoBehaviour
         } else if (timeUsed <= 33) //high health state
         {
             Debug.Log("AE AdaptTime FAST state");
-            // TODO random value for HIGH health loss. Either fewer enemies, weaker enemies, or mega health pack
+          
             switch (randomizer)
             {
                 case 0:
@@ -222,6 +241,15 @@ public class AdaptationEngine : MonoBehaviour
     public List<Int32> GetPlayerScore()
     {
         return playerScore; // for UI to display score at end
+    }
+    public List<Int32> GetPlayerHealthScore()
+    {
+        return playerHealthScore; // for UI to display score at end
+    }
+    
+    public List<Int32> GetPlayerTimeScore()
+    {
+        return playerTimeScore; // for UI to display score at end
     }
     // Instantiation Methods
 
@@ -359,5 +387,14 @@ public class AdaptationEngine : MonoBehaviour
     public Transform CurrentRoom()
     {
         return playerRoom;
+    }
+
+
+    private void AdaptUltraMechanoid()
+    {
+        int averageSkill = playerScore.Sum() / playerScore.Count;
+        Debug.Log("Average skills = "+ averageSkill);
+        ultraMechanoid.SetHealth(averageSkill);
+        ultraMechanoid.SetDamagePower(averageSkill);
     }
 }

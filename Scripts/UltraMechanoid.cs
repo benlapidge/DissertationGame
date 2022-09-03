@@ -1,15 +1,16 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.ProBuilder;
 
 public class UltraMechanoid : Shootable
 {
-   
+
     [Header("Shootable Object Properties")] [SerializeField]
-    private float health;
+    private float health = default;
 
     public NavMeshAgent agent;
     public Transform player;
-    public LayerMask whatIsGround, whatIsPlayer;
+    public LayerMask whatIsPlayer;
     [SerializeField] private float DamageAmount = default;
 
     [Header("Audio")] 
@@ -17,12 +18,13 @@ public class UltraMechanoid : Shootable
     [SerializeField] private AudioClip hitClip = default;
     [SerializeField] private AudioClip shotClip = default;
     [SerializeField] private AudioClip deathClip = default;
+    [SerializeField] private GameObject helper = default;
     
-    
+// Spawn control
+    private bool isCreated = true;
 
+    private int counter = 0;
     //patrolling
-    public Vector3 walkPoint;
-    public float walkPointRange;
 
     //attacking
     public float timeBetweenAttacks;
@@ -58,8 +60,8 @@ public class UltraMechanoid : Shootable
         laser.enabled = false;
         laser.startColor = Color.red;
         laser.endColor = Color.red;
-        laser.startWidth = 0.4f;
-        laser.endWidth = 0.4f;
+        laser.startWidth = 0.6f;
+        laser.endWidth = 0.6f;
     }
 
     private void Update()
@@ -69,61 +71,98 @@ public class UltraMechanoid : Shootable
         if (alive && !playerInSightRange && !playerInAttackRange)
         {
             Idle();
-            Debug.Log("player not in sight or attack range");
+            
         }
 
         if (alive && playerInSightRange && !playerInAttackRange)
         {
             Idle();
-            Debug.Log("player seen but not in attack range");
+
         }
 
         if (alive && playerInSightRange && playerInAttackRange)
         {
             AttackPlayer();
-            Debug.Log("ATTACK");
+            
         }
+
+        if (!isCreated)
+        {
+            SpawnHelper();
+        }
+
+        if (counter >= 15)
+        {
+            isCreated = false;
+            counter = 0;
+        }
+        
     }
 
 
     private void Idle()
     {
-       animation.Play("UM_idle");
-       Debug.Log("UM Idle Method");
+        animation.Play("UM_idle");
     }
-    
-    
 
     private void AttackPlayer()
     {
-        Debug.Log("UM Attack Player");
+        
         agent.SetDestination(transform.position);
         transform.LookAt(player);
-        Debug.Log("UM Lookat Player");
-
+        //find eyeball for laser
+        Vector3 eyeBall = GameObject.Find("Eye").transform.position;
         if (!alreadyAttacked)
         {
-            Debug.Log("UM Attack");
+            int randomValue = Random.Range(0,3);
             animation.Play("UM_Attack");
             // only if raycast is player
             RaycastHit hit;
+            
             if (Physics.Raycast(agent.transform.position, agent.transform.forward, out hit))
             {
-                if (hit.transform == player)
+                if (hit.transform == player && randomValue == 0)
                 {
+                    //laser attack
                     laser.enabled = true;
-                    laser.SetPosition(0, agent.transform.position);
-                    laser.SetPosition(1, player.transform.position);
+                        laser.SetPosition(0, eyeBall);
+                        laser.SetPosition(1, player.transform.position);
+                        voiceBox.PlayOneShot(shotClip);
+                        HealthSystem.OnTakeDamage(DamageAmount);
+                        //end attack
+                        alreadyAttacked = true;
+                        Invoke(nameof(ResetAttack), timeBetweenAttacks);
+                } else if (hit.transform == player && randomValue == 1)
+                {
+                    //failed attack
+                    laser.enabled = true;
+                    laser.SetPosition(0, eyeBall);
+                    laser.SetPosition(1, new Vector3(player.transform.position.x-3,player.transform.position.y+2,player.transform.position.z));
                     voiceBox.PlayOneShot(shotClip);
-                    HealthSystem.OnTakeDamage(DamageAmount);
-                    //end attack
                     alreadyAttacked = true;
+                    Invoke(nameof(ResetAttack), timeBetweenAttacks); 
+                } else if (hit.transform == player && randomValue == 2)
+                {
+                    // spawn helper
+                    isCreated = false;
                     Invoke(nameof(ResetAttack), timeBetweenAttacks);
                 }
             }
 
             
         }
+    }
+
+    private void SpawnHelper()
+    {
+        isCreated = true;
+        Debug.Log("SPAWN HELPER");
+        int randomNumber = Random.Range(0, 2);
+        Transform helperSpawnPoint = gameObject.transform.Find("SpawnPoints").GetChild(randomNumber);
+        Instantiate(helper,
+            new Vector3(helperSpawnPoint.position.x, helperSpawnPoint.position.y, helperSpawnPoint.position.z),
+            helperSpawnPoint.rotation);
+        
     }
 
     private void ResetAttack()
@@ -133,6 +172,8 @@ public class UltraMechanoid : Shootable
 
     public override void OnDamage(float amount)
     {
+        counter++;
+        animation.Play("UM_hit");
         health -= amount;
         voiceBox.PlayOneShot(hitClip);
         if (health <= 0) Death();
@@ -160,9 +201,56 @@ public class UltraMechanoid : Shootable
     
     private void OnDrawGizmosSelected()
     {
+        // for visualising sight and attack ranges
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
+    }
+    
+    // for adaptation
+    public void SetHealth(int value)
+    {
+        switch (value)
+        {
+            case 2:
+                health = 100f;
+                break;
+            case 3:
+                health = 200f;
+                break;
+            case 4:
+                health = 300f;
+                break;
+            case 5:
+                health = 400f;
+                break;
+            case 6:
+                health = 500f;
+                break;
+            
+        }
+    }
+
+    public void SetDamagePower(int value)
+    {
+        switch (value)
+        {
+            case 2:
+                DamageAmount = 10f;
+                break;
+            case 3:
+                DamageAmount = 15f;
+                break;
+            case 4:
+                DamageAmount = 20f;
+                break;
+            case 5:
+                DamageAmount = 25f;
+                break;
+            case 6:
+                DamageAmount = 30f;
+                break;
+        }
     }
 }
