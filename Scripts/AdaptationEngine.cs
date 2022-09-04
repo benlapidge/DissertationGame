@@ -44,7 +44,9 @@ public class AdaptationEngine : MonoBehaviour
     private int timeScore;
     private bool UMAdapted = false;
     
-    
+    //random numbers
+    private int randomHealthNumber;
+    private int randomTimeNumber;
 
     // Start is called before the first frame update
     public void Start()
@@ -73,6 +75,7 @@ public class AdaptationEngine : MonoBehaviour
         {
             if (MonitorHealth(roomSensors[currentRoom]) >= 0 && MonitorTime(roomSensors[currentRoom]) >= 0) //will likely struggle in edge cases where player loses no health but has time, will start running prematurely
             {
+                Randomiser();
                 // include iteration to next room once adaptation process is complete    
                 AdaptHealth(MonitorHealth(roomSensors[currentRoom]));
                 AdaptTime(MonitorTime(roomSensors[currentRoom]));
@@ -126,10 +129,19 @@ public class AdaptationEngine : MonoBehaviour
         return -1;
     }
 // Adaptation Methods & Randomizer
+
+    private void Randomiser()
+    {
+        do
+        {
+            randomHealthNumber = Random.Range(0, 3);
+            randomTimeNumber = Random.Range(0, 3);    
+        } while (randomHealthNumber == randomTimeNumber);
+    }
     public void AdaptHealth(float healthLoss)
     {
-        int randomizer = Random.Range(0, 3);
-        Debug.Log("Random digit is: "+randomizer);
+        int randomizer = randomHealthNumber;
+        Debug.Log("AdaptHealth Random digit is: "+randomizer);
         if (healthLoss >= 50) //low health state
         {
             Debug.Log("AE AdaptHealth LOW state");
@@ -182,7 +194,8 @@ public class AdaptationEngine : MonoBehaviour
     }
     public void AdaptTime(float timeUsed)
     {
-        int randomizer = Random.Range(0, 3); // todo return random number and check they are different
+        int randomizer = randomTimeNumber;
+        Debug.Log("AdaptTime Random digit is: "+randomizer);
         if (timeUsed >= 67) // slow time state
         {
             Debug.Log("AE AdaptTime SLOW state");
