@@ -32,13 +32,18 @@ public class MetricSensor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !playerEntered)
         {
             enterHealth = health.GetCurrentHealth();
             StartTimer(true);
             Debug.Log("Player entered trigger zone with health of " + enterHealth);
         }
-
+        else if (other.CompareTag("Player") && playerEntered)
+        {
+            StartTimer(true);
+            Debug.Log("Player reentered trigger zone with health of " + enterHealth);
+        }
+        
         playerEntered = true;
     }
 
@@ -113,7 +118,7 @@ public class MetricSensor : MonoBehaviour
         if (currentTime <= 0)
         {
             StartTimer(false);
-            health.PlayerDeath();
+            health.PlayerDeath(true);
             playerDied = true;
         }
         }

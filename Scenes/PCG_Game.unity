@@ -18322,7 +18322,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh230004
+  m_Name: pb_Mesh28190
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -48663,6 +48663,7 @@ MonoBehaviour:
   inventory: {fileID: 1415073622}
   damageTaken: {fileID: 828413936}
   healthTaken: {fileID: 1944119868}
+  health: {fileID: 0}
 --- !u!114 &1491282634
 MonoBehaviour:
   m_ObjectHideFlags: 0

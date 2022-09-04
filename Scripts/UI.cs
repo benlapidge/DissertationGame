@@ -17,9 +17,10 @@ public class UI : MonoBehaviour
     [SerializeField] private Image healthTaken;
     private int currentKey;
     private AdaptationEngine engine = default;
-
+    [SerializeField] HealthSystem health;
     private void Start()
     {
+        
         IncreaseHealth(100);
         gameQuit.enabled = false;
         button = GameObject.Find("Exit Game");
@@ -28,6 +29,7 @@ public class UI : MonoBehaviour
         healthTaken.enabled = false;
         timeLimit.enabled = false;
         engine = GameObject.Find("AdaptationEngine").GetComponent<AdaptationEngine>();
+        health = GameObject.FindWithTag("Player").GetComponent<HealthSystem>();
     }
 
     private void Update()
@@ -80,7 +82,8 @@ public class UI : MonoBehaviour
 
     private void PlayerDeath(bool dead)
     {
-        if (dead) healthText.text = "50";
+        string deathHealth = health.GetCurrentHealth().ToString("00");
+        if (dead) healthText.text = deathHealth;
     }
 
     private void UpdateKeys(int crntKey)
