@@ -20,6 +20,10 @@ PrefabInstance:
       value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8483016408674247952, guid: b42cf6cf443d342109991087b322fe36, type: 3}
+      propertyPath: shotClip
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8483016408674247952, guid: b42cf6cf443d342109991087b322fe36, type: 3}
       propertyPath: DamageAmount
       value: 10
       objectReference: {fileID: 0}

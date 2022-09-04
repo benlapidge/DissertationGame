@@ -91,12 +91,6 @@ public class UltraMechanoid : Shootable
             SpawnHelper();
         }
 
-        if (counter >= 15)
-        {
-            isCreated = false;
-            counter = 0;
-        }
-        
     }
 
 

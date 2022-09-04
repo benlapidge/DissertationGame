@@ -10,6 +10,8 @@ public class UI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI keyList;
     [SerializeField] private TextMeshProUGUI timeLimit;
+    [SerializeField] private TextMeshProUGUI gameQuit;
+    [SerializeField] private GameObject button;
     [SerializeField] private InventorySystem inventory;
     [SerializeField] private Image damageTaken;
     [SerializeField] private Image healthTaken;
@@ -19,6 +21,9 @@ public class UI : MonoBehaviour
     private void Start()
     {
         IncreaseHealth(100);
+        gameQuit.enabled = false;
+        button = GameObject.Find("Exit Game");
+        button.SetActive(false);
         damageTaken.enabled = false;
         healthTaken.enabled = false;
         timeLimit.enabled = false;
@@ -31,9 +36,11 @@ public class UI : MonoBehaviour
         UpdateKeys(currentKey);
     }
 
+    
 
     private void OnEnable()
     {
+        GameEnding.OnEnd += EndGame;
         HealthSystem.OnDamage += ReduceHealth;
         HealthSystem.OnHeal += IncreaseHealth;
         HealthSystem.OnRepair += IncreaseHealth;
@@ -44,13 +51,21 @@ public class UI : MonoBehaviour
 
     private void OnDisable()
     {
+        GameEnding.OnEnd -= EndGame;
         HealthSystem.OnDamage -= ReduceHealth;
         HealthSystem.OnHeal -= IncreaseHealth;
         HealthSystem.OnRepair -= IncreaseHealth;
         HealthSystem.OnDeath -= PlayerDeath;
         MetricSensor.OnTimerStart -= TimerCountDown;
     }
-
+    private void EndGame(bool end)
+    {
+        if (end)
+        {
+            gameQuit.enabled = true;
+            button.SetActive(true);
+        }
+    }
     private void ReduceHealth(float crntHealth)
     {
         healthText.text = crntHealth.ToString("00");

@@ -67,7 +67,7 @@ public class HealthSystem : MonoBehaviour
         player.enabled = true;
         dead = false;
         OnDeath?.Invoke(dead);
-        currentHealth = 100;
+        currentHealth = 50;
 
 
     }
