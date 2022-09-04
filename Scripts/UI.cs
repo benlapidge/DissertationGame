@@ -80,7 +80,7 @@ public class UI : MonoBehaviour
 
     private void PlayerDeath(bool dead)
     {
-        if (dead) healthText.text = "100";
+        if (dead) healthText.text = "50";
     }
 
     private void UpdateKeys(int crntKey)

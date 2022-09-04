@@ -14,7 +14,8 @@ public class MetricSensor : MonoBehaviour
     public bool startTimer;
     public float currentTime;
     [SerializeField] private float timeLimit;
-    
+
+    private bool playerDied;
     //for UI
     public static Action<float> OnTimerStart;
     private void Awake()
@@ -113,6 +114,7 @@ public class MetricSensor : MonoBehaviour
         {
             StartTimer(false);
             health.PlayerDeath();
+            playerDied = true;
         }
         }
     }
@@ -126,8 +128,13 @@ public class MetricSensor : MonoBehaviour
     
     public float ReturnTimeTaken()
     {
+        
+        if (playerDied)
+        {
+            return timeLimit - 1;
+        }
         //returns amount of time remaining as a percentage of total time
-        return timeLimit - currentTime;
+        return timeLimit - currentTime; 
     }
 
     public void SetTimeLimit(float time)
