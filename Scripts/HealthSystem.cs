@@ -63,7 +63,7 @@ public class HealthSystem : MonoBehaviour
                 StopCoroutine(HealthRegen());
             Debug.Log("DEAD");
             dead = true;
-            currentHealth = 50;
+            currentHealth = 100;
             OnDeath?.Invoke(dead);
             player.enabled = false;
             player.transform.position = engine.CurrentRoom().Find("RespawnPoint").transform.position;

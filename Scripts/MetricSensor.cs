@@ -14,8 +14,8 @@ public class MetricSensor : MonoBehaviour
     public bool startTimer;
     public float currentTime;
     [SerializeField] private float timeLimit;
-
-    private bool playerDied;
+    private bool playerDiedInChamber;
+    private bool playerDiedFromTime;
     //for UI
     public static Action<float> OnTimerStart;
     private void Awake()
@@ -23,13 +23,20 @@ public class MetricSensor : MonoBehaviour
         currentTime = timeLimit;
         health = GameObject.FindWithTag("Player").GetComponent<HealthSystem>();
         HealthSystem.OnDeath += RestartTimerOnDeath;
+        HealthSystem.OnDeath += PlayerDiedInChamber;
     }
     
     private void Update()
     {
         Countdown(startTimer);
     }
-
+ private void PlayerDiedInChamber(bool dead)
+ {
+     if (playerEntered && dead)
+     {
+         playerDiedInChamber = true;
+     }
+ }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && !playerEntered)
@@ -84,12 +91,19 @@ public class MetricSensor : MonoBehaviour
 
     public float EnterHealth()
     {
+        
         return enterHealth;
     }
 
     public float ExitHealth()
     {
-        return exitHealth;
+        if (playerDiedInChamber)
+        {
+            return enterHealth - (enterHealth-1);
+        }
+        
+            return exitHealth;
+
     }
 
     public bool PlayerPresent()
@@ -119,7 +133,7 @@ public class MetricSensor : MonoBehaviour
         {
             StartTimer(false);
             health.PlayerDeath(true);
-            playerDied = true;
+            playerDiedFromTime = true;
         }
         }
     }
@@ -134,7 +148,7 @@ public class MetricSensor : MonoBehaviour
     public float ReturnTimeTaken()
     {
         
-        if (playerDied)
+        if (playerDiedFromTime)
         {
             return timeLimit - 1;
         }
