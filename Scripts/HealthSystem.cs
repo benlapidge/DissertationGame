@@ -54,20 +54,39 @@ public class HealthSystem : MonoBehaviour
         regeneratingHealth = StartCoroutine(HealthRegen());
     }
 
-    public void PlayerDeath()
+    public void PlayerDeath(bool byTimeExpire = false)
     {
-        currentHealth = 0;
-        if (regeneratingHealth != null)
-            StopCoroutine(HealthRegen());
-        Debug.Log("DEAD");
-        dead = true;
-        OnDeath?.Invoke(dead);
-        player.enabled = false;
-        player.transform.position = engine.CurrentRoom().Find("RespawnPoint").transform.position;
-        player.enabled = true;
-        dead = false;
-        OnDeath?.Invoke(dead);
-        currentHealth = 100;
+        if (byTimeExpire == false)
+        {
+            currentHealth = 0;
+            if (regeneratingHealth != null)
+                StopCoroutine(HealthRegen());
+            Debug.Log("DEAD");
+            dead = true;
+            currentHealth = 100;
+            OnDeath?.Invoke(dead);
+            player.enabled = false;
+            player.transform.position = engine.CurrentRoom().Find("RespawnPoint").transform.position;
+            player.enabled = true;
+            dead = false;
+            OnDeath?.Invoke(dead);
+            
+        } else if (byTimeExpire == true)
+        {
+            
+            
+            if (regeneratingHealth != null)
+                StopCoroutine(HealthRegen());
+            Debug.Log("DEAD");
+            dead = true;
+            OnDeath?.Invoke(dead);
+            player.enabled = false;
+            player.transform.position = engine.CurrentRoom().Find("RespawnPoint").transform.position;
+            player.enabled = true;
+            dead = false;
+            OnDeath?.Invoke(dead);
+        }
+        
 
 
     }

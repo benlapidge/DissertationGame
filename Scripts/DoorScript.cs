@@ -36,7 +36,10 @@ public class DoorScript : Interactable
             doorSounds.PlayOneShot(doorunlocked);
             doorAnim.Play("DoorOpen", 0, 0.0f);
             doorOpen = true;
+        } else if (!doorOpen && !inventory.GetKeys().Contains(doorNum))
+        {
+            doorSounds.PlayOneShot(doorlocked);    
         }
-        doorSounds.PlayOneShot(doorlocked);
+        
     }
 }

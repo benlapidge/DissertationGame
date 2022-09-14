@@ -9,12 +9,14 @@ public class EnemyAI : Shootable
     public NavMeshAgent agent;
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
+    [SerializeField] private float DamageAmount = default;
 
     [Header("Audio")] 
     [SerializeField] private AudioSource voiceBox = default;
-    [SerializeField] private AudioClip[] hitClips = default;
-    [SerializeField] private AudioClip[] walkClip = default;
+    [SerializeField] private AudioClip hitClip = default;
+    [SerializeField] private AudioClip shotClip = default;
     [SerializeField] private AudioClip deathClip = default;
+    
     
 
     //patrolling
@@ -34,15 +36,30 @@ public class EnemyAI : Shootable
     private ParticleSystem blood;
     private bool playerInSightRange, playerInAttackRange;
     private bool walkPointSet;
+    
+    //laser effect
+    private LineRenderer laser;
 
     private void Awake()
     {
+        
         alive = true;
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animation = gameObject.GetComponent<Animator>();
         blood = gameObject.GetComponentInChildren<ParticleSystem>();
         voiceBox = GetComponent<AudioSource>();
+        InitialiseLaser();
+    }
+
+    private void InitialiseLaser()
+    {
+        laser = gameObject.AddComponent<LineRenderer>();
+        laser.enabled = false;
+        laser.startColor = Color.red;
+        laser.endColor = Color.red;
+        laser.startWidth = 0.2f;
+        laser.endWidth = 0.2f;
     }
 
     private void Update()
@@ -87,15 +104,18 @@ public class EnemyAI : Shootable
 
         if (!alreadyAttacked)
         {
-            //TODO ATTACK HERE
-            
+
             // only if raycast is player
             RaycastHit hit;
             if (Physics.Raycast(agent.transform.position, agent.transform.forward, out hit))
             {
                 if (hit.transform == player)
                 {
-                    HealthSystem.OnTakeDamage(20);
+                    laser.enabled = true;
+                    laser.SetPosition(0, agent.transform.position);
+                    laser.SetPosition(1, player.transform.position);
+                    voiceBox.PlayOneShot(shotClip);
+                    HealthSystem.OnTakeDamage(DamageAmount);
                     //end attack
                     alreadyAttacked = true;
                     Invoke(nameof(ResetAttack), timeBetweenAttacks);
@@ -114,6 +134,7 @@ public class EnemyAI : Shootable
     public override void OnDamage(float amount)
     {
         health -= amount;
+        voiceBox.PlayOneShot(hitClip);
         if (health <= 0) Death();
     }
 

@@ -103,10 +103,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
+  m_Radius: 0.75865316
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0, z: -0.016079426}
 --- !u!95 &8483016408674247958
 Animator:
   serializedVersion: 4
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bab692e5e36014793b41eb09af50326f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 50
+  health: 45
   agent: {fileID: 8483016408674247953}
   player: {fileID: 0}
   whatIsGround:
@@ -147,10 +147,11 @@ MonoBehaviour:
     m_Bits: 1024
   whatIsPlayer:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 2112
+  DamageAmount: 15
   voiceBox: {fileID: 0}
-  hitClips: []
-  walkClip: []
+  hitClip: {fileID: 8300000, guid: 97ec9d094527e4f1f9cca4bc16bfdad5, type: 3}
+  shotClip: {fileID: 8300000, guid: ea3504695dccb4e88a72dfcf4ee4a415, type: 3}
   deathClip: {fileID: 8300000, guid: a1dd1335eee9a40e3902efcad78c6f7f, type: 3}
   walkPoint: {x: 0, y: 0, z: 0}
   walkPointRange: 5

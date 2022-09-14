@@ -13,8 +13,9 @@ public class MetricSensor : MonoBehaviour
     private bool playerExited;
     public bool startTimer;
     public float currentTime;
-    [SerializeField] float timeLimit = 20.0f;
-    
+    [SerializeField] private float timeLimit;
+    private bool playerDiedInChamber;
+    private bool playerDiedFromTime;
     //for UI
     public static Action<float> OnTimerStart;
     private void Awake()
@@ -22,22 +23,34 @@ public class MetricSensor : MonoBehaviour
         currentTime = timeLimit;
         health = GameObject.FindWithTag("Player").GetComponent<HealthSystem>();
         HealthSystem.OnDeath += RestartTimerOnDeath;
+        HealthSystem.OnDeath += PlayerDiedInChamber;
     }
     
     private void Update()
     {
         Countdown(startTimer);
     }
-
+ private void PlayerDiedInChamber(bool dead)
+ {
+     if (playerEntered && dead)
+     {
+         playerDiedInChamber = true;
+     }
+ }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !playerEntered)
         {
             enterHealth = health.GetCurrentHealth();
             StartTimer(true);
             Debug.Log("Player entered trigger zone with health of " + enterHealth);
         }
-
+        else if (other.CompareTag("Player") && playerEntered)
+        {
+            StartTimer(true);
+            Debug.Log("Player reentered trigger zone with health of " + enterHealth);
+        }
+        
         playerEntered = true;
     }
 
@@ -78,12 +91,19 @@ public class MetricSensor : MonoBehaviour
 
     public float EnterHealth()
     {
+        
         return enterHealth;
     }
 
     public float ExitHealth()
     {
-        return exitHealth;
+        if (playerDiedInChamber)
+        {
+            return enterHealth - (enterHealth-1);
+        }
+        
+            return exitHealth;
+
     }
 
     public bool PlayerPresent()
@@ -112,7 +132,8 @@ public class MetricSensor : MonoBehaviour
         if (currentTime <= 0)
         {
             StartTimer(false);
-            health.PlayerDeath();
+            health.PlayerDeath(true);
+            playerDiedFromTime = true;
         }
         }
     }
@@ -126,12 +147,19 @@ public class MetricSensor : MonoBehaviour
     
     public float ReturnTimeTaken()
     {
+        
+        if (playerDiedFromTime)
+        {
+            return timeLimit - 1;
+        }
         //returns amount of time remaining as a percentage of total time
-        return (currentTime/timeLimit*100);
+        return timeLimit - currentTime; 
     }
 
     public void SetTimeLimit(float time)
     {
         timeLimit = time;
+        currentTime = time;
+        Debug.Log("SetTimeLimit called. New time is: "+time+"timeLimit variable = "+timeLimit);
     }
 }

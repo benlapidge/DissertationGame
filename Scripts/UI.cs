@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,17 +10,26 @@ public class UI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI keyList;
     [SerializeField] private TextMeshProUGUI timeLimit;
+    [SerializeField] private TextMeshProUGUI gameQuit;
+    [SerializeField] private GameObject button;
     [SerializeField] private InventorySystem inventory;
     [SerializeField] private Image damageTaken;
     [SerializeField] private Image healthTaken;
     private int currentKey;
-
+    private AdaptationEngine engine = default;
+    [SerializeField] HealthSystem health;
     private void Start()
     {
+        
         IncreaseHealth(100);
+        gameQuit.enabled = false;
+        button = GameObject.Find("Exit Game");
+        button.SetActive(false);
         damageTaken.enabled = false;
         healthTaken.enabled = false;
         timeLimit.enabled = false;
+        engine = GameObject.Find("AdaptationEngine").GetComponent<AdaptationEngine>();
+        health = GameObject.FindWithTag("Player").GetComponent<HealthSystem>();
     }
 
     private void Update()
@@ -27,9 +38,11 @@ public class UI : MonoBehaviour
         UpdateKeys(currentKey);
     }
 
+    
 
     private void OnEnable()
     {
+        GameEnding.OnEnd += EndGame;
         HealthSystem.OnDamage += ReduceHealth;
         HealthSystem.OnHeal += IncreaseHealth;
         HealthSystem.OnRepair += IncreaseHealth;
@@ -40,13 +53,21 @@ public class UI : MonoBehaviour
 
     private void OnDisable()
     {
+        GameEnding.OnEnd -= EndGame;
         HealthSystem.OnDamage -= ReduceHealth;
         HealthSystem.OnHeal -= IncreaseHealth;
         HealthSystem.OnRepair -= IncreaseHealth;
         HealthSystem.OnDeath -= PlayerDeath;
         MetricSensor.OnTimerStart -= TimerCountDown;
     }
-
+    private void EndGame(bool end)
+    {
+        if (end)
+        {
+            gameQuit.enabled = true;
+            button.SetActive(true);
+        }
+    }
     private void ReduceHealth(float crntHealth)
     {
         healthText.text = crntHealth.ToString("00");
@@ -61,7 +82,8 @@ public class UI : MonoBehaviour
 
     private void PlayerDeath(bool dead)
     {
-        if (dead) healthText.text = "100";
+        string deathHealth = health.GetCurrentHealth().ToString("00");
+        if (dead) healthText.text = deathHealth;
     }
 
     private void UpdateKeys(int crntKey)
@@ -87,4 +109,6 @@ public class UI : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         healthTaken.enabled = false;
     }
+
+    
 }
