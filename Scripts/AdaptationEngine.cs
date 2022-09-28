@@ -146,7 +146,7 @@ public class AdaptationEngine : MonoBehaviour
         {
             Debug.Log("AE AdaptHealth LOW state");
            
-            switch (randomizer)
+          /*  switch (randomizer)
             {
                 case 0:
                     SpawnHealthPack();
@@ -160,7 +160,7 @@ public class AdaptationEngine : MonoBehaviour
                     RemoveEnemy();
                     Debug.Log("AE AdaptHealth LOW state RemoveEnemy 0");
                     break;
-            }
+            }*/
             healthScore = 1;//adds score of 1 "low state"
             
         } else if (healthLoss >= 26) //medium health state
@@ -173,7 +173,7 @@ public class AdaptationEngine : MonoBehaviour
         {
             Debug.Log("AE AdaptHealth HIGH state");
             
-            switch (randomizer)
+           /* switch (randomizer)
             {
                 case 0:
                     RemoveHealthPack();
@@ -187,7 +187,7 @@ public class AdaptationEngine : MonoBehaviour
                     SpawnEnemy();
                     Debug.Log("AE AdaptHealth HIGH state SpawnEnemy");
                     break;
-            }
+            }*/
             healthScore = 3;//adds score of 3 "high state"
             
         }
@@ -199,7 +199,7 @@ public class AdaptationEngine : MonoBehaviour
         if (timeUsed >= 67) // slow time state
         {
             Debug.Log("AE AdaptTime SLOW state");
-            switch (randomizer)
+            /*switch (randomizer)
             {
                 case 0:
                     AddTime(timeUsed);
@@ -213,7 +213,7 @@ public class AdaptationEngine : MonoBehaviour
                     RemoveEnemy();
                     Debug.Log("AE AdaptTime SLOW state RemoveEnemy");
                     break;
-            }
+            }*/
             timeScore = 1;//adds score of 1 "low state"
             
         } else if (timeUsed >= 34) //medium health state
@@ -226,7 +226,7 @@ public class AdaptationEngine : MonoBehaviour
         {
             Debug.Log("AE AdaptTime FAST state");
           
-            switch (randomizer)
+            /*switch (randomizer)
             {
                 case 0:
                     ReduceTime(timeUsed);
@@ -240,7 +240,7 @@ public class AdaptationEngine : MonoBehaviour
                     SpawnEnemy();
                     Debug.Log("AE AdaptTime FAST state SpawnEnemy");
                     break;
-            }
+            }*/
             timeScore = 3;//adds score of 3 "high state"
             
         }

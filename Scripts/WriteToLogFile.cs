@@ -14,7 +14,7 @@ public class WriteToLogFile : MonoBehaviour
         // create file if doesnt exist
         if (!File.Exists(textDocumentName))
         {
-            File.WriteAllText(textDocumentName,"Send this file to the researcher & enter contents into survey \n \nGAME VERSION IS \"TAU\"\n \n");
+            File.WriteAllText(textDocumentName,"Send this file to the researcher & enter contents into survey \n \nGAME VERSION IS \"PHI\"\n \n");
         }
 
         File.AppendAllText(textDocumentName, text);
