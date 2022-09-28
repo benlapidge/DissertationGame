@@ -73,7 +73,7 @@ public class AdaptationEngine : MonoBehaviour
     {
         if (currentRoom < 6)
         {
-            if (MonitorHealth(roomSensors[currentRoom]) >= 0 && MonitorTime(roomSensors[currentRoom]) >= 0) //will likely struggle in edge cases where player loses no health but has time, will start running prematurely
+            if (MonitorHealth(roomSensors[currentRoom]) >= 0 && MonitorTime(roomSensors[currentRoom]) >= 0) 
             {
                 Randomiser();
                 // include iteration to next room once adaptation process is complete    
@@ -130,7 +130,7 @@ public class AdaptationEngine : MonoBehaviour
     }
 // Adaptation Methods & Randomizer
 
-    private void Randomiser()
+    public void Randomiser()
     {
         do
         {
@@ -202,15 +202,15 @@ public class AdaptationEngine : MonoBehaviour
             switch (randomizer)
             {
                 case 0:
-                    AddTime(timeUsed);
+                   AddTime(timeUsed);
                     Debug.Log("AE AdaptTime SLOW state AddTime");
                     break;
                 case 1:
-                    ReplaceEnemy(0);
+                   ReplaceEnemy(0);
                     Debug.Log("AE AdaptTime SLOW state ReplaceEnemy 0");
                     break;
                 case 2:
-                    RemoveEnemy();
+                   RemoveEnemy();
                     Debug.Log("AE AdaptTime SLOW state RemoveEnemy");
                     break;
             }
@@ -229,15 +229,15 @@ public class AdaptationEngine : MonoBehaviour
             switch (randomizer)
             {
                 case 0:
-                    ReduceTime(timeUsed);
+                  ReduceTime(timeUsed);
                     Debug.Log("AE AdaptTime FAST state ReduceTime");
                     break;
                 case 1:
-                    ReplaceEnemy(1);
+                 ReplaceEnemy(1);
                     Debug.Log("AE AdaptTime FAST state ReplaceEnemy 1");
                     break;
                 case 2:
-                    SpawnEnemy();
+                 SpawnEnemy();
                     Debug.Log("AE AdaptTime FAST state SpawnEnemy");
                     break;
             }

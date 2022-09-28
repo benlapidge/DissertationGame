@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    //reference
-    //https://www.youtube.com/watch?v=THnivyG0Mvo&t=734s
     // Start is called before the first frame update
     public float damage = 10f;
     public float range = 100f;

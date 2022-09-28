@@ -44,6 +44,7 @@ public class MetricSensor : MonoBehaviour
             enterHealth = health.GetCurrentHealth();
             StartTimer(true);
             Debug.Log("Player entered trigger zone with health of " + enterHealth);
+            playerEntered = true;
         }
         else if (other.CompareTag("Player") && playerEntered)
         {
@@ -51,7 +52,7 @@ public class MetricSensor : MonoBehaviour
             Debug.Log("Player reentered trigger zone with health of " + enterHealth);
         }
         
-        playerEntered = true;
+        
     }
 
     private void RestartTimerOnDeath(bool dead)
@@ -77,14 +78,20 @@ public class MetricSensor : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        playerEntered = true;
+        if (other.CompareTag("Player"))
+        {
+            
+            if (health.GetCurrentHealth() > enterHealth)
+            {
+                enterHealth = health.GetCurrentHealth();
+                Debug.Log("NEW ENTER HEALTH IS: " + enterHealth);
+                //if player has a healthpack, their enter health will update to reflect this, and therefore any further loss will be correctly counted.
+            }
+        }
+        
         //account for if player consumes health pack
 
-        if (health.GetCurrentHealth() > enterHealth)
-        {
-            enterHealth = health.GetCurrentHealth();
-            //if player has a healthpack, their enter health will update to reflect this, and therefore any further loss will be correctly counted.
-        }
+        
     }
 
     //include method to return all values from this 'sensor' to adaptation engine
@@ -138,7 +145,7 @@ public class MetricSensor : MonoBehaviour
         }
     }
 
-    
+
     //for adaptation engine
     public float ReturnTimeLimit()
     {

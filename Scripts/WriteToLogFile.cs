@@ -10,7 +10,7 @@ public class WriteToLogFile : MonoBehaviour
     {
         
         // path of file
-        string textDocumentName = Application.streamingAssetsPath + "/participant_data/" + "send_this" + ".txt";
+        string textDocumentName = Application.persistentDataPath + "/participant_data/" + "send_this" + ".txt";
         // create file if doesnt exist
         if (!File.Exists(textDocumentName))
         {
@@ -23,7 +23,7 @@ public class WriteToLogFile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Directory.CreateDirectory(Application.streamingAssetsPath + "/participant_data/");
+        Directory.CreateDirectory(Application.persistentDataPath + "/participant_data/");
     }
 
 }
