@@ -1,6 +1,4 @@
 # DissertationGame
-NOTE: project is currently ongoing and is not stable!
-
 Unity game Assets for dissertation.
 
 This game is a basic FPS featuring enemies. The objective is to collect each key to the next room without being defeated by enemies. 
